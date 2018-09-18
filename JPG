@@ -1,0 +1,60 @@
+# Histogram%% HISTOGRAM
+clear;
+clc;
+i1= imread('D:\matlab class\image\1327-w.jpg');
+gr1 = rgb2gray(i1);
+his1 = imhist(gr1); %% histogram
+c1 = cumsum(his1); %% cumulation
+%% cumulation his
+j=1;
+cdf(1,1)= his1(1,1);
+for i=2:256
+    cdf(i)=his1(i)+cdf(i-j); 
+end
+cdf1=cdf';
+cdf_min=min(cdf);
+[row col]=size(gr1);
+mn=row*col;
+%%erorr cumu
+
+%%show
+figure(1),subplot(1,3,1),imshow(i1)  
+title('original image');
+figure(1),subplot(1,3,2),bar(his1,'BarWidth',1)
+title('original histogram');
+figure(1),subplot(1,3,3),bar(c1,'BarWidth',1)
+title('original cumulative histogram');
+
+figure(2),subplot(2,2,1), plot(cdf)
+title('cumulation from code')
+figure(2),subplot(2,2,2), plot (c1)
+title('cumulation from function')
+%% calcuting new intensity
+for indx=1:length(cdf)
+Heq(indx)=((cdf(indx)-cdf_min)/(mn-cdf_min))*255;
+end
+Heq1=Heq';
+figure(3),plot(Heq) 
+title('New value for General Histogram');
+
+%% EQULIZED IMAGE
+
+Getim=uint8(zeros(size(gr1,1),size(gr1,2)));
+for i=1:row;
+   for j=1:col;
+       Getim(i,j) = Heq((gr1(i,j)+1));
+   end
+end
+figure(4),subplot(1,2,1),imshow(Getim) 
+title('Cal Image');
+figure(4),subplot(1,2,2),imhist(Getim)
+title('Cal image histogram');
+
+J = histeq(gr1);
+figure(5),subplot(1,3,1),imshow(i1)
+figure(5),subplot(1,3,2),imshow(Getim)
+figure(5),subplot(1,3,3),imshow(J)
+
+
+figure(6),subplot(1,2,2),bar(his1,'BarWidth',1)
+figure(6),subplot(1,2,1),bar(imhist(Getim),'Barwidth',1)
